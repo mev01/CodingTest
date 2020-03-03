@@ -11,24 +11,26 @@ int main()
 	cin.tie(NULL);
 	ios_base::sync_with_stdio(false);
 
-	int L;
 	string S;
-
-	cin >> L;
-	cin.ignore();
 	getline(cin, S);
 
-	int j = 0;
-	vector<int> v(L, 0);
-	for (int i = 1; i < L; i++)//pi배열 구하기
-	{
-		while (j > 0 && S[i] != S[j])
-			j = v[--j];
-		if (S[i] == S[j])
-			v[i] = ++j;
+	int cnt = 0, len = S.size();
+	while (len > 1)
+	{	
+		vector<int> v(len, 0);
+		int j = 0;
+		for (int i = 1; i < len; i++)//pi배열 구하기
+		{
+			while (j > 0 && S[i] != S[j])
+				j = v[--j];
+			if (S[i] == S[j])
+				v[i] = ++j;
+			if (v[i] > cnt)
+				cnt = v[i];//pi배열의 원소중 최대 값이 두번 이상 겹치는 문자열 중 가장 긴 길이, 최대 값 계속 업데이트
+		}
+		S = S.substr(1);//앞의 한자리씩 줄여나가며 배열 생성
+		len--;
 	}
 
-	//v[L-1]이 전체 문자열에서 prefix와 suffix가 같으면서 가장 긴 길이의 문자 개수이므로
-	//전체 길이에서 v[L-1]을 빼주면 가장 긴 중복되는 부분을 제거한 가장 짧은 광고 문자열이 된다.
-	cout << L - v[L - 1];
+	cout << cnt;
 }
