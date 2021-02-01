@@ -1,39 +1,39 @@
-﻿#include <iostream>
-#include <deque>
+﻿// baekjoon2178.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
+//
+
+#include <iostream>
 using namespace std;
-
-int n, m, map[101][101], visit[101][101], dx[4] = { 0,0,-1,1 }, dy[4] = { -1,1,0,0 };
-deque<pair<int, int>> de;
-
-void BFS(int x, int y) {
-	de.push_back(make_pair(x, y));
-	for (int i = 0; i < 4; i++){
-		if (x + dx[i] > 0 && y + dy[i] > 0 && map[x + dx[i]][y + dy[i]]&&!visit[x + dx[i]][y + dy[i]]) {
-			de.push_back(make_pair(x + dx[i], y + dy[i]));
-			visit[x + dx[i]][y + dy[i]] = visit[x][y] + 1;
-		}
-		if (x + dx[i] == n && y + dy[i] == m) return;
-	}
-	de.pop_front();
-	BFS(de[0].first, de[0].second);
-}
-
 
 int main()
 {
 	cin.tie(NULL);
 	ios_base::sync_with_stdio(false);
 
-	cin >> n >> m;
+	int n, m;
+	int map[100][100] = { 0, };
+
+	std::cin >> n >> m;
+
 	for (int i = 0; i < n; i++)
 	{
-		string a;
-		cin >> a;
-		for (int j = 0; j < m; j++){
-			map[i + 1][j + 1] = a[j]-'0';
+		for (int j = 0; j<m;j++)
+		{
+			std::cin >> map[i][j];
 		}
 	}
-	visit[1][1] = 1;
-	BFS(1, 1);
-	cout << visit[n][m];
+
+	
+
+    std::cout << "Hello World!\n";
 }
+
+// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
+// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
+
+// 시작을 위한 팁: 
+//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
+//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
+//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
+//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
+//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
+//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
