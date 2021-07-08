@@ -39,7 +39,7 @@ public class baekjoon1981 {
 				
 				arr[i][j] = tmp;
 				if(tmp > MAX)  MAX = tmp;
-				else if(tmp < MIN) MIN = tmp;
+				if(tmp < MIN) MIN = tmp;
 			}
 		}
 		
@@ -49,7 +49,7 @@ public class baekjoon1981 {
 	}
 
 	private static void binarySearch(int s, int e) {
-		if(s == e) {
+		if(s >= e) {
 			ans = s;
 			return;
 		}
