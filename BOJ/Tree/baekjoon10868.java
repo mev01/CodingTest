@@ -47,6 +47,6 @@ public class baekjoon10868 {
 		if(left <= s && e <= right) return tree[node];
 		if(left > e || s > right) return Integer.MAX_VALUE;
 		int m = (s + e) / 2;
-		return tree[node] = Math.min(findMin(s, m, node * 2, left, right), findMin(m + 1, e, node * 2 + 1, left, right));
+		return Math.min(findMin(s, m, node * 2, left, right), findMin(m + 1, e, node * 2 + 1, left, right));
 	}
 }
