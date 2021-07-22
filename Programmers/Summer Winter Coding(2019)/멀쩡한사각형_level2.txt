@@ -1,6 +1,14 @@
 class Solution {
     public long solution(int w, int h) {
-        long answer = 1;
-        return answer;
+        double dis = (double)h / (double)w;
+        
+        long pre = 0;
+        long ans = 0;
+        for(long i = 1; i <= w; i++){
+            ans += (i * h + (w - 1)) / w  - pre;
+            //System.out.println((i * h + (w - 1)) / w + " " + pre);
+            pre = i * h / w;
+        }
+        return (long)w * (long)h - ans;
     }
 }
