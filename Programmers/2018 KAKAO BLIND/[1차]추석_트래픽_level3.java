@@ -39,7 +39,7 @@ class Solution {
             lenLine = lenLine.substring(0, lenLine.length() - 1);
             int len = (int) (Math.ceil(Float.parseFloat(lenLine) * 1000));
             
-            logTimes[i][0] = time - len + 1;
+            logTimes[i][0] = time - len + 1; 
             logTimes[i][1] = time;
         }
         
