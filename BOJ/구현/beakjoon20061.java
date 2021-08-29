@@ -5,33 +5,15 @@ import java.util.StringTokenizer;
 
 public class beakjoon20061 {
 	static int score = 0;
-	static boolean[][][] Board;
-	
-	static class Tile{
-		int type;
-		int r1, c1, r2, c2;
-		
-		public Tile(int type, int r1, int c1) {
-			this.type = type;
-			this.r1 = r1;
-			this.c1 = c1;
-		}
-		
-		public Tile(int type, int r1, int c1, int r2, int c2) {
-			this.type = type;
-			this.r1 = r1;
-			this.c1 = c1;
-			this.r2 = r2;
-			this.c2 = c2;
-		}
-	}
+	static boolean[][] greenBoard, blueBoard;
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		
-		Board = new boolean[2][6][4];
+		greenBoard = new boolean[6][4];
+		blueBoard = new boolean[6][4];
 		
 		int N = Integer.parseInt(br.readLine());
 		for (int i = 0; i < N; i++) {
@@ -43,26 +25,25 @@ public class beakjoon20061 {
 			
 			switch (t) {
 			case 1:
-				insertTile(0, new Tile(t, 0, y));
-				insertTile(1, new Tile(t, 0, x));
+				insertTile(greenBoard, t, y);
+				insertTile(blueBoard, t, x);
 				break;
 			case 2:
-				insertTile(0, new Tile(2, 0, y, 0, y + 1));
-				insertTile(1, new Tile(3, 0, x, 1, x));
+				insertTile(greenBoard, 2, y);
+				insertTile(blueBoard, 3, x);
 				break;
 			case 3:
-				insertTile(0, new Tile(3, 0, y, 1, y));
-				insertTile(1, new Tile(2, 0, x, 0, x + 1));
+				insertTile(greenBoard, 3, y);
+				insertTile(blueBoard, 2, x);
 				break;
 			}
 		}
 		
 		int cnt = 0;
-		for (int type = 0; type < 2; type++) {
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 4; j++) {
-					if(Board[type][i][j]) ++cnt;
-				}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 4; j++) {
+				if(greenBoard[i][j]) ++cnt;
+				if(blueBoard[i][j]) ++cnt;
 			}
 		}
 		
@@ -70,92 +51,59 @@ public class beakjoon20061 {
 		System.out.print(sb.toString());
 	}
 
-	private static void insertTile(int boardType, Tile tile) {
+	private static void insertTile(boolean[][] board, int type, int dis) {
 		for (int i = 0; i < 6; i++) {
-			boolean isChange = false;
-			
-			if(tile.type == 1 && (i == 5 || Board[boardType][i + 1][tile.c1])) {
-				Board[boardType][i][tile.c1] = true;
-				isChange = true;
+			if(type == 1 && (i == 5 || board[i + 1][dis])) {
+				board[i][dis] = true;
+				break;
 			}
-			else if(tile.type == 2 && (i == 5 || Board[boardType][i + 1][tile.c1] || Board[boardType][i + 1][tile.c2])) {
-				Board[boardType][i][tile.c1] = true;
-				Board[boardType][i][tile.c2] = true;
-				isChange = true;
+			else if(type == 2 && (i == 5 || board[i + 1][dis] || board[i + 1][dis + 1])) {
+				board[i][dis] = true;
+				board[i][dis + 1] = true;
+				break;
 			}
-			else if(tile.type == 3 && (i == 4 || Board[boardType][i + 2][tile.c1])) {
-				Board[boardType][i][tile.c1] = true;
-				Board[boardType][i + 1][tile.c1] = true;
-				isChange = true;
-			}
-			
-			if(isChange) {
-				deleteFullTile(boardType);
-				updateTile(boardType);
-				deleteTileIfLightColor(boardType);
-				updateTile(boardType);
+			else if(type == 3 && (i == 4 || board[i + 2][dis])) {
+				board[i][dis] = true;
+				board[i + 1][dis] = true;
 				break;
 			}
 		}
+		
+		deleteFullTile(board);
+		deleteTileIfLightColor(board);
 	}
 
-	private static void deleteFullTile(int boardType) {
-		for (int i = 5; i >= 0; i--) {
-			boolean flag = true;
+	private static void deleteFullTile(boolean[][] board) {
+		for (int i = 0; i < 6; i++) {
+			boolean fullTile = true;
 			
 			for (int j = 0; j < 4; j++) {
-				if(!Board[boardType][i][j]) flag = false;
+				if(!board[i][j]) fullTile = false;
 			}
 			
-			if(flag) {
+			if(fullTile) {
 				++score;
-				for (int j = 0; j < 4; j++) {
-					Board[boardType][i][j] = false;
-				}
+				updateTile(board, i);
 			}
 		}
 	}
 	
-	private static void updateTile(int boardType) {
-		int r = 5;
-		
-		for (int i = 5; i >= 0; i--) {
-			boolean flag = false;
-			
-			for (int j = 0; j < 4; j++) {
-				if(Board[boardType][i][j]) flag = true;
-			}
-			
-			if(flag && r != i) {
-				for (int j = 0; j < 4; j++) {
-					if(Board[boardType][i][j]) {
-						Board[boardType][i][j] = false;
-						Board[boardType][r][j] = true;
-					}
-				}
-				r--;
-			}
-			else if(flag) r--;
-		}
-	}
-	
-	private static void deleteTileIfLightColor(int boardType) {
-		int cnt = 0;
-		
+	private static void deleteTileIfLightColor(boolean[][] board) {
 		for (int i = 0; i < 2; i++) {
-			boolean flag = false;
+			boolean isTile = false;
 			
 			for (int j = 0; j < 4; j++) {
-				if(Board[boardType][i][j]) flag = true;
+				if(board[i][j]) isTile = true;
 			}
 			
-			if(flag) cnt++;
+			if(isTile) updateTile(board, 5);
 		}
-		
-		for (int i = 5; i > 5 - cnt; i--) {
-			for (int j = 0; j < 4; j++) {
-				Board[boardType][i][j] = false;
-			}
+	}
+    
+    private static void updateTile(boolean[][] board, int r) {
+		for (int i = r - 1; i >= 0; i--) {
+			board[i + 1] = board[i];
 		}
+		board[0] = new boolean[4];
 	}
 }
