@@ -1,30 +1,54 @@
+import java.util.*;
+
 class Solution {
     static int len;
-    static int[] foodArr;
+    static boolean[] notRemained;
+    static Food[] foodArr;
     
-    public int solution(int[] food_times, long k) {
-        int answer = 0;
-        foodArr = food_times;
+    static class Food implements Comparable<Food>{
+        int num, value;
         
-        len = foodArr.length;
-        int idx = 0;
-        while(k-- > 0){
-            --foodArr[idx];
-            
-            int nIdx = findNextIdx(idx);
-            if(nIdx == -1) return -1;
-            idx = nIdx;
+        public Food(int num, int value){
+            this.num = num;
+            this.value = value;
         }
         
-        return idx + 1;
+        @Override
+        public int compareTo(Food o){
+            return this.value - o.value;
+        }
     }
     
-    int findNextIdx(int idx){
-        int nIdx = (idx + 1) % len;
-        while(foodArr[nIdx] == 0){
-            nIdx  = (nIdx + 1) % len;
-            if(idx == nIdx) return -1;
+    public int solution(int[] food_times, long k) {
+        len = food_times.length;
+        notRemained = new boolean[len];
+        foodArr = new Food[len];
+        
+        for(int j = 0; j < len; j++){
+            foodArr[j] = new Food(j, food_times[j]);
         }
-        return nIdx;
+        
+        Arrays.sort(foodArr);
+        
+        long pre = 0, time = 0;
+        for(int i = 0; i < len; i++){
+            long num = (len - i) * (foodArr[i].value - pre);
+            if(time + num > k){
+                long st = num % (len - i) + 1;
+                System.out.println("st " + st);
+                System.out.println(Arrays.toString(notRemained));
+                for(int j = 0; j < len; j++){
+                    if(!notRemained[j]) --st;
+                    if(st == 0) return j + 1;
+                }
+            }
+            
+            time += num;
+            pre = foodArr[i].value;
+            notRemained[foodArr[i].num] = true;
+            System.out.println(time);
+        }
+        
+        return -1;
     }
 }
