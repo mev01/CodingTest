@@ -34,9 +34,7 @@ class Solution {
         for(int i = 0; i < len; i++){
             long num = (len - i) * (foodArr[i].value - pre);
             if(time + num > k){
-                long st = num % (len - i) + 1;
-                System.out.println("st " + st);
-                System.out.println(Arrays.toString(notRemained));
+                long st = (k - time) % (len - i) + 1;
                 for(int j = 0; j < len; j++){
                     if(!notRemained[j]) --st;
                     if(st == 0) return j + 1;
@@ -46,7 +44,6 @@ class Solution {
             time += num;
             pre = foodArr[i].value;
             notRemained[foodArr[i].num] = true;
-            System.out.println(time);
         }
         
         return -1;
