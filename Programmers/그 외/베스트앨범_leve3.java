@@ -60,3 +60,10 @@ class Solution {
         return ansArr;
     }
 }
+
+
+docker run -d --name jenkins -p 8080:8000 -p 50000:50000 -v /app/jenkins:/var/jenkins_home   -u root -e JAVA_OPTS='-Duser.timezone=Asia/Seoul -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8' leechungkyu/jenkins
+
+docker run -d --name jenkins -p 8080:8000 -p 50000:50000 -v /app/jenkins:/var/jenkins_home   -u root -e JAVA_OPTS='-Duser.timezone=Asia/Seoul -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8' jenkins/jenkins
+
+docker run -d --restart always --name jenkins -p 8000:8080 -p 50000:50000 -v /app/jenkins:/var/jenkins_home jenkins/jenkins
