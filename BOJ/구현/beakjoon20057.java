@@ -78,7 +78,7 @@ public class beakjoon20057 {
 		
 		for (int i = 0; i < dir; i++) {
 			int temp = pos.r;
-			pos.r = N - pos.c - 1;
+			pos.r = 5 - pos.c - 1;
 			pos.c = temp;
 		}
 		
