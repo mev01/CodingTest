@@ -49,6 +49,6 @@ class Solution {
         }
         
         if(ansMax < correctAnsNum) ansMax = correctAnsNum;
-        else if(correctAnsNum < ansMin) ansMin = correctAnsNum;
+        if(correctAnsNum < ansMin) ansMin = correctAnsNum;
     }
 }
