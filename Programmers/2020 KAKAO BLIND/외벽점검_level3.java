@@ -17,11 +17,11 @@ class Solution {
         subsetArr = new boolean[dist.length];
         Subset(0);
         
-        return ans;
+        return ans == Integer.MAX_VALUE ? -1 : ans;
     }
     
     void makeWeakToLine(){
-        for(int i = 0; i < weakLine.length - 1; i++){
+        for(int i = 0; i < weakLine.length; i++){
             if(i >= weakArr.length) weakLine[i] = weakLine[i - weakArr.length] + N;
             else weakLine[i] = weakArr[i];
         }
@@ -64,10 +64,26 @@ class Solution {
                 int num = weakLine[dist] + friends.get(j);
                 
                 int idx = Arrays.binarySearch(weakLine, num);
-                if(idx < 0) idx = (idx + 1) * -1;
+                if(idx < 0) idx = (idx + 1) * -1 - 1;
                 
-                if(idx >= i + weakArr.length) return true;
-                dist = idx;
+                // if(idx >= i + weakArr.length){
+                //     System.out.println(Arrays.toString(weakLine));
+                //     for(int k : friends){
+                //         System.out.print(k + " ");
+                //     }
+                //     System.out.println();
+                //     System.out.println(i + " " + j + " " + idx + " " + (i + weakArr.length) + " " + num);
+                // }
+                // System.out.println(Arrays.toString(weakLine));
+                //     for(int k : friends){
+                //         System.out.print(k + " ");
+                //     }
+                //     System.out.println();
+                //     System.out.println(i + " " + j + " " + idx + " " + (i + weakArr.length - 1) + " " + num);
+                
+                
+                if(idx >= i + weakArr.length - 1) return true;
+                dist = idx + 1;
             }
         }
         
