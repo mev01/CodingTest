@@ -2,9 +2,9 @@ import java.util.*;
 
 class Solution {
     static int N, ans = Integer.MAX_VALUE;
-    static int[] weakArr, distArr, weakLine;
+    static int[] weakArr, distArr, weakLine, permFriendsArr;
     static ArrayList<Integer> friends;
-    static boolean[] subsetArr;
+    static boolean[] subsetArr, visitedPerm;
     
     public int solution(int n, int[] weak, int[] dist) {
         N = n;
@@ -30,9 +30,10 @@ class Solution {
     void Subset(int idx){
         if(idx == distArr.length){
             friends = calcFriendsToPutIn();
-            if(canInspection()){
-                ans = Math.min(ans, friends.size());
-            }
+            
+            permFriendsArr = new int[friends.size()];
+            visitedPerm = new boolean[friends.size()];
+            permFriends(0);
             
             return;
         }
@@ -56,31 +57,33 @@ class Solution {
         return list;
     }
     
+    void permFriends(int idx){
+        if(idx == friends.size()){
+            if(canInspection()){
+                ans = Math.min(ans, friends.size());
+            }
+            return;
+        }
+        
+        for(int i = 0; i < friends.size(); i++){
+            if(!visitedPerm[i]){
+                visitedPerm[i] = true;
+                permFriendsArr[idx] = friends.get(i);
+                
+                permFriends(idx + 1);
+                visitedPerm[i] = false;
+            }
+        }
+    }
+    
     Boolean canInspection(){
         for(int i = 0; i < weakArr.length; i++){
             int dist = i;
             
             for(int j = 0; j < friends.size(); j++){
-                int num = weakLine[dist] + friends.get(j);
-                
+                int num = weakLine[dist] + permFriendsArr[j];
                 int idx = Arrays.binarySearch(weakLine, num);
                 if(idx < 0) idx = (idx + 1) * -1 - 1;
-                
-                // if(idx >= i + weakArr.length){
-                //     System.out.println(Arrays.toString(weakLine));
-                //     for(int k : friends){
-                //         System.out.print(k + " ");
-                //     }
-                //     System.out.println();
-                //     System.out.println(i + " " + j + " " + idx + " " + (i + weakArr.length) + " " + num);
-                // }
-                // System.out.println(Arrays.toString(weakLine));
-                //     for(int k : friends){
-                //         System.out.print(k + " ");
-                //     }
-                //     System.out.println();
-                //     System.out.println(i + " " + j + " " + idx + " " + (i + weakArr.length - 1) + " " + num);
-                
                 
                 if(idx >= i + weakArr.length - 1) return true;
                 dist = idx + 1;
