@@ -4,13 +4,10 @@ class Solution {
     static int[] Order;
     static Room[] roomArr;
     static boolean[] visited, isNotPass, essentialRoom;
+    static Queue<Integer> nextRoom;
     
     static class Room{
-        ArrayList<Integer> list;
-        
-        public Room(){
-            list = new ArrayList<>();
-        }
+        ArrayList<Integer> list = new ArrayList<>();
     }
     
     public boolean solution(int n, int[][] paths, int[][] orders) {
@@ -34,49 +31,51 @@ class Solution {
             if(order[0] != 0) isNotPass[order[1]] = true;
         }
         
-        visited = new boolean[roomArr.length];
-        if(!isNotPass[0]) Visit(0);
-         
-        for(boolean isVisit : visited){
-            if(!isVisit) return false;
+        visited = new boolean[n];
+        nextRoom = new LinkedList<>();
+        
+        Search(0);
+        
+        while(!nextRoom.isEmpty()){
+            // System.out.print("room ");
+            // for(int a : nextRoom){
+            //     System.out.print(a + " ");
+            // }System.out.println();
+            
+            int room = nextRoom.poll();
+                
+            if(!visited[room]){
+                boolean isPass = false;
+                for(int nRoom : roomArr[room].list){
+                    if(visited[nRoom]) isPass = true;
+                }
+                if(isPass) Search(room);
+            }
+        }
+        
+        for(boolean visit : visited){
+            if(!visit) return false;
         }
         
         return true;
     }
     
-    void Visit(int startNum){
-        visited = new boolean[roomArr.length];
-        Queue<Integer> que = new LinkedList<>();
-        ArrayList<Integer> visitedEssentialRoom = new ArrayList<>();
+    void Search(int room){
+        // System.out.println(room);
+        if(isNotPass[room]){
+            return;
+        }
         
-        que.offer(startNum);
-        visited[startNum] = true;
-        
-        while(!que.isEmpty()){
-            int roomNum = que.poll();
-            Room room = roomArr[roomNum];
+        visited[room] = true;
+        if(essentialRoom[room]){
+            essentialRoom[room] = false;
+            isNotPass[Order[room]] = false;
             
-            for(int num : room.list){
-                if(!visited[num] && !isNotPass[num]){
-                    visited[num] = true;
-                    if(essentialRoom[num]){
-                        essentialRoom[num] = false;
-                        visitedEssentialRoom.add(num);
-                    } 
-                    
-                    que.offer(num);
-                }
-            }
+            nextRoom.offer(Order[room]);
         }
         
-        boolean flag = false;
-        for(int num : visitedEssentialRoom){
-            // System.out.println("visited " + num);
-            isNotPass[Order[num]] = false;
-            flag = true;
+        for(int nRoom : roomArr[room].list){
+            if(!visited[nRoom]) Search(nRoom);
         }
-        System.out.println();
-        
-        if(flag) Visit(0);
     }
 }
