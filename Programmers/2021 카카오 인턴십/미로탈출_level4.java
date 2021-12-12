@@ -5,19 +5,22 @@ class Solution {
     
     static class Room{
         boolean isTrap;
+        int trapNum;
         ArrayList<Integer> connectedRoads = new ArrayList<>();
     }
     
-    static class User{
-        int num, cnt;
-        boolean[] reverseArr;
-        int[] cntArr;
+    static class User implements Comparable<User>{
+        int num, cnt, activeTrap;
         
-        public User(int num, int cnt, boolean[] reverseArr, int[] cntArr){
+        public User(int num, int cnt, int activeTrap){
             this.num = num;
             this.cnt = cnt;
-            this.reverseArr = reverseArr;
-            this.cntArr = cntArr;
+            this.activeTrap = activeTrap;
+        }
+        
+        @Override
+        public int compareTo(User o){
+            return this.cnt - o.cnt;
         }
     }
     
@@ -33,47 +36,50 @@ class Solution {
             roomArr[roads[i][1]].connectedRoads.add(i);
         }
         
-        for(int num : traps){
-            roomArr[num].isTrap = true;
+        for(int i = 0; i < traps.length; i++){
+            roomArr[traps[i]].isTrap = true;
+            roomArr[traps[i]].trapNum = 1 << i;
         }
         
         int answer = Integer.MAX_VALUE;
-        boolean[] reverseArr = new boolean[roadLen];
-        int[] cntArr = new int[n + 1];
+        boolean[] visited = new boolean[n + 1];
         
-        Queue<User> que = new LinkedList<>();
-        que.offer(new User(start, 0, reverseArr, cntArr));
+        PriorityQueue<User> que = new PriorityQueue<>();
+        que.offer(new User(start, 0, 0));
         
         while(!que.isEmpty()){
             User user = que.poll();
             Room room = roomArr[user.num];
             
-            if(answer <= user.cnt) continue;
             if(user.num == end){
-                answer = user.cnt;
+                return user.cnt;
             }
             
-            // System.out.println(user.num + " " + user.cnt);
+            System.out.println(user.num + " " + user.cnt);
             
             for(int idx : room.connectedRoads){
-                int from = user.reverseArr[idx] ? roads[idx][1] : roads[idx][0];
-                int to = user.reverseArr[idx] ? roads[idx][0] : roads[idx][1];
-                
-                if(user.num != from) continue;
-                
-                reverseArr = user.reverseArr.clone();
-                cntArr = user.cntArr.clone();
-                if(roomArr[to].isTrap){
-                    for(int toIdx : roomArr[to].connectedRoads){
-                        reverseArr[toIdx] = !reverseArr[toIdx];
-                    }
+                boolean isReverse = false;
+                if(roomArr[roads[idx][0]].isTrap){
+                    isReverse = (user.activeTrap & roomArr[roads[idx][0]].trapNum) != 0 ? !isReverse : isReverse;
+                }
+                if(roomArr[roads[idx][1]].isTrap){
+                    isReverse = (user.activeTrap & roomArr[roads[idx][1]].trapNum) != 0 ? !isReverse : isReverse;
                 }
                 
-                cntArr[to]++;
-                if(cntArr[to] > 2) continue;
+                int from = isReverse ? roads[idx][1] : roads[idx][0];
+                int to = isReverse ? roads[idx][0] : roads[idx][1];
                 
-                que.offer(new User(to, user.cnt + roads[idx][2], reverseArr, cntArr));
+                System.out.println(from + " " + to);
+                
+                if(user.num != from) continue;
+                if(!roomArr[to].isTrap && visited[to]) continue;
+                
+                visited[to] = true;
+                int nTrap = roomArr[to].isTrap ? user.activeTrap ^ roomArr[to].trapNum : user.activeTrap;
+                
+                que.offer(new User(to, user.cnt + roads[idx][2], nTrap));
             }
+            System.out.println();
         }
         
         return answer;
