@@ -42,7 +42,7 @@ class Solution {
         }
         
         int answer = Integer.MAX_VALUE;
-        boolean[] visited = new boolean[n + 1];
+        boolean[][] visited = new boolean[n + 1][1 << traps.length];
         
         PriorityQueue<User> que = new PriorityQueue<>();
         que.offer(new User(start, 0, 0));
@@ -51,11 +51,11 @@ class Solution {
             User user = que.poll();
             Room room = roomArr[user.num];
             
+            visited[user.num][user.activeTrap] = true;
+            
             if(user.num == end){
                 return user.cnt;
             }
-            
-            System.out.println(user.num + " " + user.cnt);
             
             for(int idx : room.connectedRoads){
                 boolean isReverse = false;
@@ -69,17 +69,14 @@ class Solution {
                 int from = isReverse ? roads[idx][1] : roads[idx][0];
                 int to = isReverse ? roads[idx][0] : roads[idx][1];
                 
-                System.out.println(from + " " + to);
                 
                 if(user.num != from) continue;
-                if(!roomArr[to].isTrap && visited[to]) continue;
                 
-                visited[to] = true;
                 int nTrap = roomArr[to].isTrap ? user.activeTrap ^ roomArr[to].trapNum : user.activeTrap;
+                if(visited[to][nTrap]) continue;
                 
                 que.offer(new User(to, user.cnt + roads[idx][2], nTrap));
             }
-            System.out.println();
         }
         
         return answer;
