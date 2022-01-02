@@ -20,38 +20,45 @@ public class beakjoon2504 {
 			else if(ch == ')') {
 				int part = calc(-2);
 				
-				if(part == -1) break;
+				if(part == -1) {
+					System.out.println(0);
+					return;
+				}
 			}
 			else {
 				int part = calc(-3);
 				
-				if(part == -1) break;
+				if(part == -1) {
+					System.out.println(0);
+					return;
+				}
 			}
 		}
 		
-		if(st.peek() < 0 ) System.out.println(0);
-		else {
-			int num = 0;
-			
-			while(!st.isEmpty()) {
-				num += st.pop();
-			}
-			
-			System.out.println(num);
+		if(st.peek() < 0) {
+			System.out.println(0);
+			return;
 		}
+		
+		while(!st.isEmpty()) {
+			ans += st.pop();
+		}
+		
+		System.out.println(ans);
 	}
 
 	private static int calc(int num) {
 		int sum = 0;
-		while(st.peek() > 0) {
+		while(st.size() > 0 && st.peek() > 0) {
 			sum += st.pop();
 		}
 		
-		if(st.peek() != num) return -1;
+		if(st.size() == 0 || st.peek() != num) return -1;
 		
-		if(sum == 0) sum = 1;
-		st.add(sum * (-1 * st.pop()));
-		return st.peek();
+		num = -1 * st.pop() * (sum == 0 ? 1 : sum);
+		
+		st.add(num);
+		return num;
 	}
 
 }
